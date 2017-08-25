@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
+const moment = require('moment');
 
 app.use(express.static(`${__dirname}/public`));
 
@@ -15,16 +16,20 @@ io.on('connection', (socket) => {
     // Eventos definidos por programador
     socket.on('mensaje',(mensaje) => {
         console.log(`Mensaje recibido: ${mensaje.text}`);
-
+        
         // A todos los clientes
-        io.emit('mensaje', mensaje);
+        io.emit('mensaje', {
+            ts: moment().valueOf(),
+            text: mensaje.text
+        });
     });
 
     socket.emit('mensaje', {
+        ts: moment().valueOf(),
         text: 'Bienvenido al chat'
     });
 });
 
 http.listen(PORT, () => {
-    console.log('Server started');
+    console.log('Server started: ' + PORT);
 });
