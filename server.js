@@ -16,17 +16,19 @@ io.on('connection', (socket) => {
     // Eventos definidos por programador
     socket.on('mensaje',(mensaje) => {
         console.log(`Mensaje recibido: ${mensaje.text}`);
-        
+
         // A todos los clientes
         io.emit('mensaje', {
             ts: moment().valueOf(),
-            text: mensaje.text
+            text: mensaje.text,
+            nombre: mensaje.nombre
         });
     });
 
     socket.emit('mensaje', {
         ts: moment().valueOf(),
-        text: 'Bienvenido al chat'
+        text: 'Bienvenido al chat',
+        nombre: 'Server NodeJS'
     });
 });
 
