@@ -8,3 +8,14 @@ socket.on('connect', () => {
 socket.on('mensaje', (mensaje) => {
     console.log(` > Nuevo mensaje: ${mensaje.text}`);
 });
+
+var $form = jQuery("#form-mensaje");
+$form.on('submit', (event) => {
+    event.preventDefault();
+
+    var $input_msg = $form.find('input[name=mensaje]');
+    socket.emit('mensaje', {
+        text: $input_msg.val()
+    });
+    $input_msg.val('');
+});
