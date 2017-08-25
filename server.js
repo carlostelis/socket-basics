@@ -17,7 +17,7 @@ io.on('connection', (socket) => {
         console.log(`Mensaje recibido: ${mensaje.text}`);
 
         // A todos los clientes
-        socket.broadcast.emit('mensaje', mensaje);
+        io.emit('mensaje', mensaje);
     });
 
     socket.emit('mensaje', {

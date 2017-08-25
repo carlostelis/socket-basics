@@ -7,6 +7,8 @@ socket.on('connect', () => {
 // Evento definido por programador
 socket.on('mensaje', (mensaje) => {
     console.log(` > Nuevo mensaje: ${mensaje.text}`);
+
+    jQuery('.mensajes').append(`<p>${mensaje.text}</p>`);
 });
 
 var $form = jQuery("#form-mensaje");
