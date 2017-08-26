@@ -15,6 +15,20 @@ let clientInfo = {};
 io.on('connection', (socket) => {
     console.log('User connected via socket.io');
 
+    socket.on('disconnect', () => {
+        let datos = clientInfo[socket.id];
+        if (typeof datos !== 'undefined') {
+            socket.leave(datos);
+            io.to(datos.room).emit('mensaje', {
+                nombre: 'Server NodeJS',
+                text: `${datos.nombre} ha abandonado el room`,
+                ts: moment().valueOf()
+            });
+
+            delete clientInfo[socket.id];
+        }
+    });
+
     // Eventos definidos por programador
     socket.on('joinRoom', (req) => {
         clientInfo[socket.id] = req;
