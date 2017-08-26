@@ -1,11 +1,19 @@
 var socket = io();
 var nombre = getQueryVariable('nombre') || 'Anónimo';
-var room = getQueryVariable('room');
+var room = getQueryVariable('room') || 'General';
 
+var $form = jQuery("#form-mensaje");
 console.log(nombre +  ' entró a ' + room);
+
+jQuery(".room-titulo").text('Room: ' + room);
 
 socket.on('connect', () => {
     console.log('Conectado al servidor');
+    // Custom event
+    socket.emit('joinRoom', {
+        nombre: nombre,
+        room: room
+    });
 });
 
 // Nombre de Evento definido por programador
@@ -15,7 +23,7 @@ socket.on('mensaje', (mensaje) => {
     jQuery('.mensajes').append(`<p><strong>${mensaje.nombre} ${moment.utc(mensaje.ts).local().format('h:mma')}:</strong></p><p>${mensaje.text}</p>`);
 });
 
-var $form = jQuery("#form-mensaje");
+
 $form.on('submit', (event) => {
     event.preventDefault();
 
