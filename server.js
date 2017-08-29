@@ -9,6 +9,34 @@ app.use(express.static(`${__dirname}/public`));
 
 let clientInfo = {};
 
+function sendCurrentUsers(socket) {
+    let info = clientInfo[socket.id];
+    let users = [];
+
+    if (typeof info === 'undefined') {
+        console.log(info);
+        return;
+    }
+
+    // Toma un objeto y devuelve un arreglo de los atributos
+    // para recorrerlo con forEach
+    Object.keys(clientInfo).forEach((socketId) => {
+        let userInfo = clientInfo[socketId];
+
+        if (userInfo.room === info.room) {
+            console.log(userInfo.nombre);
+            users.push(userInfo.nombre);
+        }
+    });
+
+    // join() hace una cadena con el separador indicado
+    socket.emit('mensaje', {
+        nombre: 'Server NodeJS',
+        text: `Usuarios: ${users.join(', ')}`,
+        ts: moment().valueOf()
+    });
+}
+
 // No es para uso tradicional desde IP a IP
 // Escucha conexiones desde front-end to back-end
 // para transmisión de datos sin necesidad de refrescar
@@ -43,12 +71,16 @@ io.on('connection', (socket) => {
     socket.on('mensaje',(mensaje) => {
         console.log(`Mensaje recibido: ${mensaje.text}`);
 
-        // A todos los clientes
-        io.to(clientInfo[socket.id].room).emit('mensaje', {
-            ts: moment().valueOf(),
-            text: mensaje.text,
-            nombre: mensaje.nombre
-        });
+        if (mensaje.text === '@currentUsers') {
+            sendCurrentUsers(socket);
+        } else {
+            // A todos los clientes
+            io.to(clientInfo[socket.id].room).emit('mensaje', {
+                ts: moment().valueOf(),
+                text: mensaje.text,
+                nombre: mensaje.nombre
+            });
+        }
     });
 
     socket.emit('mensaje', {
