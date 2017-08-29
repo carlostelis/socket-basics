@@ -19,8 +19,11 @@ socket.on('connect', () => {
 // Nombre de Evento definido por programador
 socket.on('mensaje', (mensaje) => {
     console.log(` > Nuevo mensaje: ${mensaje.text}`);
+    let $mensajes = jQuery('.mensajes');
+    let $newMensaje = jQuery(`<li class="list-group-item"></li>`);
 
-    jQuery('.mensajes').append(`<p><strong>${mensaje.nombre} ${moment.utc(mensaje.ts).local().format('h:mma')}:</strong></p><p>${mensaje.text}</p>`);
+    $newMensaje.append(`<p><strong>${mensaje.nombre} ${moment.utc(mensaje.ts).local().format('h:mma')}:</strong></p><p>${mensaje.text}</p>`);
+    $mensajes.append($newMensaje);
 });
 
 
